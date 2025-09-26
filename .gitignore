@@ -134,3 +134,8 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+ # SvelteKit build output
+.sveltekit/
+
+# Claude AI cache
+.claude/
