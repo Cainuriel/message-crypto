@@ -154,7 +154,7 @@
 			tabindex="0"
 			aria-label="Cerrar modal"
 			on:click={closeMessageModal}
-			on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') closeMessageModal(); }}
+			on:keydown={(e) => { if (e.key === 'Enter') closeMessageModal(); }}
 		>
 			<div
 				class="modal"
