@@ -5,7 +5,7 @@ import { EIP5630Crypto } from './src/lib/crypto/eip5630.js';
 import { ethers } from 'ethers';
 
 async function testEIP5630() {
-    console.log('🧪 Probando implementación EIP-5630 ECIES...\n');
+    console.log('🧪 Probando implementación ...\n');
 
     try {
         // 1. Crear wallets de prueba
@@ -64,7 +64,7 @@ async function testEIP5630() {
         console.log('6. Prueba de rendimiento...');
         const messages = [
             "Mensaje corto",
-            "Este es un mensaje más largo con más contenido para probar el rendimiento del algoritmo de cifrado EIP-5630 ECIES",
+            "Este es un mensaje más largo con más contenido para probar el rendimiento del algoritmo ECIES",
             "¡Hola! 👋 Me interesa mucho tu producto. ¿Podrías enviarme más detalles? Mi presupuesto es de $500-1000. También me gustaría saber sobre garantía y tiempo de entrega. ¡Gracias! 😊"
         ];
 
@@ -81,14 +81,14 @@ async function testEIP5630() {
             console.log(`   Mensaje ${i + 1}: ${testMessage.length} chars - ${(endTime - startTime).toFixed(2)}ms - ${success ? '✅' : '❌'}`);
         }
 
-        console.log('\n🎉 ¡Todas las pruebas de EIP-5630 ECIES pasaron exitosamente!');
+        console.log('\n🎉 ¡Todas las pruebas de ECIES pasaron exitosamente!');
         console.log('\n📊 Características de la implementación:');
         console.log('   • Curva elíptica: secp256k1 (compatible con Ethereum)');
         console.log('   • Cifrado simétrico: XChaCha20-Poly1305');
         console.log('   • Derivación de claves: HKDF con SHA-256');
         console.log('   • Autenticación: MAC con SHA-256');
         console.log('   • Seguridad: Resistente a ataques de timing');
-        console.log('   • Compatibilidad: EIP-5630 compliant');
+ 
 
         return true;
 

@@ -1,7 +1,6 @@
 <script>
 	import { isConnected, userAddress, signer } from '$lib/stores/auth.js';
 	import { ads, getMessagesForAd, decryptMessage } from '$lib/stores/ads.js';
-	import { SimpleSymmetricCrypto } from '$lib/crypto/eip5630.js';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';

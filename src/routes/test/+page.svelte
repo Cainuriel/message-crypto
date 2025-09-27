@@ -101,7 +101,7 @@
 			const messages = [
 				'Mensaje corto',
 				'Este es un mensaje mediano con más contenido para probar el rendimiento',
-				'Este es un mensaje muy largo con mucho contenido para probar cómo se comporta el algoritmo EIP-5630 ECIES con mensajes de mayor tamaño. Incluye emojis 🚀✨🔐 y caracteres especiales áéíóú ñ para una prueba completa.'
+				'Este es un mensaje muy largo con mucho contenido para probar cómo se comporta el algoritmo ECIES con mensajes de mayor tamaño. Incluye emojis 🚀✨🔐 y caracteres especiales áéíóú ñ para una prueba completa.'
 			];
 
 			for (let i = 0; i < messages.length; i++) {
@@ -139,12 +139,12 @@
 </script>
 
 <svelte:head>
-	<title>Pruebas EIP-5630 - MessageCrypto</title>
+	<title>Pruebas - MessageCrypto</title>
 </svelte:head>
 
 <div class="container">
 	<header class="test-header">
-		<h1>🧪 Pruebas EIP-5630 ECIES</h1>
+		<h1> Pruebas ECIES</h1>
 		<p>Verificación de la implementación de cifrado asimétrico</p>
 	</header>
 
@@ -155,9 +155,9 @@
 			disabled={isRunning}
 		>
 			{#if isRunning}
-				⏳ Ejecutando...
+				 Ejecutando...
 			{:else}
-				🚀 Ejecutar Pruebas
+				 Ejecutar Pruebas
 			{/if}
 		</button>
 

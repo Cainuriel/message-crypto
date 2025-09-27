@@ -148,8 +148,22 @@
 
 	<!-- Modal para enviar mensaje -->
 	{#if showMessageModal}
-		<div class="modal-overlay" on:click={closeMessageModal}>
-			<div class="modal" on:click|stopPropagation>
+		<div
+			class="modal-overlay"
+			role="button"
+			tabindex="0"
+			aria-label="Cerrar modal"
+			on:click={closeMessageModal}
+			on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') closeMessageModal(); }}
+		>
+			<div
+				class="modal"
+				role="dialog"
+				aria-modal="true"
+				on:click|stopPropagation
+				tabindex="0"
+				on:keydown={(e) => { if (e.key === 'Escape') closeMessageModal(); }}
+			>
 				<div class="modal-header">
 					<h3>💌 Enviar Mensaje Cifrado</h3>
 					<button class="close-btn" on:click={closeMessageModal}>×</button>
@@ -191,7 +205,7 @@
 
 					<div class="encryption-info">
 						<small>
-							🔒 Tu mensaje será cifrado usando EIP-5630 y solo el vendedor podrá leerlo con su wallet.
+							🔒 Tu mensaje será cifrado usando criptografía y solo el vendedor podrá leerlo con su wallet.
 						</small>
 					</div>
 				</div>

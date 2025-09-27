@@ -1,4 +1,4 @@
-// EIP-5630 Implementation using Noble Libraries
+// Implementation using Noble Libraries
 import { secp256k1 } from '@noble/curves/secp256k1';
 import { xchacha20poly1305 } from '@noble/ciphers/chacha.js';
 import { sha256 } from '@noble/hashes/sha256';
@@ -28,7 +28,7 @@ const getRandomBytes = (size) => {
 
 export class EIP5630Crypto {
 	/**
-	 * EIP-5630 Real Implementation
+	 *  
 	 * Uses proper ECIES (Elliptic Curve Integrated Encryption Scheme)
 	 * Compatible with Ethereum's secp256k1 curve
 	 */
@@ -116,12 +116,12 @@ export class EIP5630Crypto {
 	}
 
 	/**
-	 * EIP-5630 ECIES Encryption using Noble libraries
+	 * ECIES Encryption using Noble libraries
 	 * Real cryptographic implementation with proper security
 	 */
 	static async encrypt(message, recipientPublicKeyHex) {
 		try {
-			console.log('Starting EIP-5630 ECIES encryption...');
+			console.log('Starting ECIES encryption...');
 
 			// 1. Generate ephemeral key pair
 			const ephemeralPrivateKey = getRandomBytes(32);
@@ -152,7 +152,7 @@ export class EIP5630Crypto {
 
 			// 4. Derive encryption and MAC keys using HKDF
 			const salt = getRandomBytes(16);
-			const info = utf8ToBytes('EIP-5630-ECIES-v1');
+			const info = utf8ToBytes('EIP-ECIES-v1');
 			const derivedKeys = hkdf(sha256, sharedSecret.slice(1), salt, info, 64); // Remove 0x04 prefix from shared secret
 
 			const encryptionKey = derivedKeys.slice(0, 32);
@@ -173,9 +173,9 @@ export class EIP5630Crypto {
 			]);
 			const mac = sha256(new Uint8Array([...macKey, ...macData]));
 
-			// 7. Return EIP-5630 compliant structure
+			// 7. Return ECIES compliant structure
 			const result = {
-				version: 'EIP-5630-ECIES-v1',
+				version: 'ECIES-v1',
 				ephemeralPublicKey: bytesToHex(ephemeralPublicKey),
 				salt: bytesToHex(salt),
 				nonce: bytesToHex(nonce),
@@ -183,25 +183,25 @@ export class EIP5630Crypto {
 				mac: bytesToHex(mac)
 			};
 
-			console.log('EIP-5630 encryption completed successfully');
+			console.log('ECIES encryption completed successfully');
 			return result;
 
 		} catch (error) {
-			console.error('EIP-5630 encryption failed:', error);
-			throw new Error(`EIP-5630 encryption failed: ${error.message}`);
+			console.error('  encryption failed:', error);
+			throw new Error(`ECIES encryption failed: ${error.message}`);
 		}
 	}
 
 	/**
-	 * EIP-5630 ECIES Decryption using Noble libraries  
+	 * ECIES Decryption using Noble libraries
 	 * Secure implementation with proper private key handling
 	 */
 	static async decrypt(encryptedData, signer) {
 		try {
-			console.log('Starting EIP-5630 ECIES decryption...');
+			console.log('Starting ECIES decryption...');
 
 			// 1. Validate structure
-			if (encryptedData.version !== 'EIP-5630-ECIES-v1') {
+			if (encryptedData.version !== 'ECIES-v1') {
 				// Try fallback to MetaMask format
 				return await this.decryptWithMetaMask(encryptedData, signer);
 			}
@@ -220,7 +220,7 @@ export class EIP5630Crypto {
 			const sharedSecret = secp256k1.getSharedSecret(privateKey, ephemeralPublicKey, true);
 
 			// 5. Derive keys using HKDF
-			const info = utf8ToBytes('EIP-5630-ECIES-v1');
+			const info = utf8ToBytes('ECIES-v1');
 			const derivedKeys = hkdf(sha256, sharedSecret.slice(1), salt, info, 64);
 
 			const encryptionKey = derivedKeys.slice(0, 32);
@@ -244,12 +244,12 @@ export class EIP5630Crypto {
 			const decryptedBytes = cipher.decrypt(ciphertext);
 
 			const result = bytesToUtf8(decryptedBytes);
-			console.log('EIP-5630 decryption completed successfully');
+			console.log(' decryption completed successfully');
 			return result;
 
 		} catch (error) {
-			console.error('EIP-5630 decryption failed:', error);
-			throw new Error(`EIP-5630 decryption failed: ${error.message}`);
+			console.error(' decryption failed:', error);
+			throw new Error(` decryption failed: ${error.message}`);
 		}
 	}
 
@@ -330,7 +330,7 @@ export class EIP5630Crypto {
 	 * @deprecated Use encrypt() instead
 	 */
 	static async encryptForMetaMask(message, publicKey) {
-		console.warn('encryptForMetaMask is deprecated, using EIP-5630 encrypt instead');
+		console.warn('encryptForMetaMask is deprecated, using our encrypt instead');
 		return await this.encrypt(message, publicKey);
 	}
 }

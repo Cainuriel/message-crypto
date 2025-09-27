@@ -39,14 +39,14 @@
 
 		<main>
 			<div class="welcome-card">
-				<h2>Bienvenido al Panel de Anuncios</h2>
-				<p>Crea anuncios con mensajes cifrados o explora los anuncios existentes</p>
+				<h2>Panel de Anuncios crypto</h2>
+				<p>Crea un anuncio, envía un mensaje con otra cuenta compradora y descifralo con tu cuenta vendedora</p>
 			</div>
 
 			<div class="actions">
 				<div class="action-card">
 					<h3>📝 Crear Anuncio</h3>
-					<p>Sube una imagen, escribe tu anuncio y configura la clave de cifrado para los mensajes</p>
+					<p>Sube una imagen, escribe tu anuncio y espera mensajes que solo tu podrás descifrar</p>
 					<button on:click={goToCreate}>Crear Nuevo Anuncio</button>
 				</div>
 

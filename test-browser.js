@@ -4,12 +4,12 @@
 import { EIP5630Crypto } from './src/lib/crypto/eip5630.js';
 
 async function testBrowser() {
-    console.log('🧪 Probando EIP-5630 en navegador...');
+ 
     
     try {
         // Simular clave pública para prueba
         const testPublicKey = '036ca9129a7f2bfae6d9269787fcfb180f8eeb19f170353e961294308c8a8bdaaa';
-        const testMessage = 'Hola, este es un mensaje de prueba para EIP-5630';
+        const testMessage = 'Hola, este es un mensaje de prueba  ';
         
         console.log('Mensaje:', testMessage);
         console.log('Cifrando...');

@@ -39,8 +39,14 @@ declare module '$env/static/private' {
 	export const ComSpec: string;
 	export const DriverData: string;
 	export const EDITOR: string;
-	export const EFC_23636_1592913036: string;
+	export const EFC_24144_1262719628: string;
+	export const EFC_24144_1592913036: string;
+	export const EFC_24144_2283032206: string;
+	export const EFC_24144_2775293581: string;
+	export const EFC_24144_3789132940: string;
 	export const ENABLE_IDE_INTEGRATION: string;
+	export const FPS_BROWSER_APP_PROFILE_STRING: string;
+	export const FPS_BROWSER_USER_PROFILE_STRING: string;
 	export const GIT_ASKPASS: string;
 	export const HOME: string;
 	export const HOMEDRIVE: string;
@@ -48,7 +54,6 @@ declare module '$env/static/private' {
 	export const INIT_CWD: string;
 	export const LANG: string;
 	export const LOCALAPPDATA: string;
-	export const LOCAL_GIT_DIRECTORY: string;
 	export const LOGONSERVER: string;
 	export const NODE: string;
 	export const NODE_ENV: string;
@@ -151,8 +156,14 @@ declare module '$env/dynamic/private' {
 		ComSpec: string;
 		DriverData: string;
 		EDITOR: string;
-		EFC_23636_1592913036: string;
+		EFC_24144_1262719628: string;
+		EFC_24144_1592913036: string;
+		EFC_24144_2283032206: string;
+		EFC_24144_2775293581: string;
+		EFC_24144_3789132940: string;
 		ENABLE_IDE_INTEGRATION: string;
+		FPS_BROWSER_APP_PROFILE_STRING: string;
+		FPS_BROWSER_USER_PROFILE_STRING: string;
 		GIT_ASKPASS: string;
 		HOME: string;
 		HOMEDRIVE: string;
@@ -160,7 +171,6 @@ declare module '$env/dynamic/private' {
 		INIT_CWD: string;
 		LANG: string;
 		LOCALAPPDATA: string;
-		LOCAL_GIT_DIRECTORY: string;
 		LOGONSERVER: string;
 		NODE: string;
 		NODE_ENV: string;

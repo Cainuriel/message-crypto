@@ -105,27 +105,27 @@
 			{/if}
 
 			<button type="submit" disabled={loading || !publicAddress.trim()}>
-				{loading ? 'Conectando...' : 'Conectar con MetaMask'}
+				{loading ? 'Conectando...' : 'Conecte'}
 			</button>
 		</form>
 
 		<div class="debug-section">
 			<button type="button" on:click={testMetaMask} class="debug-btn">
-				🔍 Detectar MetaMask
+			 Si cambia de dirección clique aquí 
 			</button>
 		</div>
 
 		<div class="info">
 			<h3>¿Cómo funciona?</h3>
 			<ol>
-				<li>Ingresa tu dirección pública de Ethereum</li>
+				<li>Ingresa tu dirección pública conectando</li>
 				<li>Confirma tu identidad firmando un mensaje con MetaMask</li>
 				<li>Accede al panel de anuncios cifrados</li>
 			</ol>
 		</div>
 
 		<div class="test-link">
-			<a href="/test">🧪 Página de Pruebas EIP-5630</a>
+			<a href="/test"> Página de Pruebas </a>
 		</div>
 	</div>
 </div>

@@ -56,15 +56,15 @@ export const sendMessage = async (adId, messageText, senderAddress) => {
 			throw new Error('Clave pública de cifrado del vendedor no disponible');
 		}
 
-		console.log('Cifrando mensaje con EIP-5630 ECIES...');
+		console.log('Cifrando mensaje con ECIES...');
 
-		// Usar la implementación mejorada de EIP-5630 con ECIES real
+		// Usar la implementación mejorada con ECIES real
 		const encryptedMessage = await EIP5630Crypto.encrypt(
 			messageText, 
 			ad.encryptionPublicKey
 		);
 
-		console.log('Mensaje cifrado exitosamente con EIP-5630');
+		console.log('Mensaje cifrado exitosamente con ECIES');
 
 		const message = {
 			id: Date.now().toString(),
@@ -106,15 +106,15 @@ export const decryptMessage = async (messageId, adId, signer) => {
 			throw new Error('Mensaje no encontrado');
 		}
 
-		console.log('Descifrando mensaje con EIP-5630 ECIES...');
+		console.log('Descifrando mensaje con ECIES...');
 
-		// Usar la implementación mejorada de EIP-5630 con fallback a MetaMask
+		// Usar la implementación mejorada de ECIES con fallback a MetaMask
 		const decryptedText = await EIP5630Crypto.decrypt(
 			message.encryptedContent,
 			signer
 		);
 
-		console.log('Mensaje descifrado exitosamente con EIP-5630');
+		console.log('Mensaje descifrado exitosamente con ECIES');
 		return { success: true, decryptedText };
 	} catch (error) {
 		console.error('Error decrypting message:', error);
