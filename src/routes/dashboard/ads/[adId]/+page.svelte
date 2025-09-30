@@ -125,10 +125,10 @@
 				<div class="encryption-info">
 					<h3>🔐 Información de Cifrado</h3>
 					<div class="encryption-details">
-						<p><strong>Clave Pública:</strong> <code>{ad.publicKey.substring(0, 30)}...</code></p>
+						<p><strong>Id del anuncio:</strong> <code>{ad.publicKey.substring(0, 30)}...</code></p>
 						<p><strong>Dirección Derivada:</strong> <code>{ad.derivedAddress}</code></p>
 						<div class="encryption-explanation">
-							<p>Tu mensaje será cifrado usando la clave pública del anuncio. Solo el creador puede descifrarlo con su clave privada de MetaMask.</p>
+							<p>Tu mensaje será cifrado usando la id del anuncio. Solo el creador puede descifrarlo.</p>
 						</div>
 					</div>
 				</div>
@@ -177,10 +177,10 @@
 			<div class="security-notice">
 				<h4>🛡️ Seguridad del Mensaje</h4>
 				<ul>
-					<li>Tu mensaje será cifrado usando criptografía de clave pública</li>
+					<li>Tu mensaje será cifrado con la id del anuncio</li>
 					<li>Solo el creador del anuncio puede descifrar tu mensaje</li>
 					<li>El mensaje cifrado se almacena de forma segura</li>
-					<li>Tu identidad como remitente será registrada</li>
+					<li>No podrás ser contestado así que pon datos de contacto</li>
 				</ul>
 			</div>
 		{:else}

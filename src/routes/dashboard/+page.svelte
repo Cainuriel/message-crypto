@@ -157,7 +157,7 @@
 									<span>Creado: {formatDate(ad.createdAt)}</span>
 								</p>
 								<div class="ad-encryption">
-									<small>Mensajes cifrados con clave pública</small>
+									<small>Mensajes cifrados con id del anuncio</small>
 								</div>
 							</div>
 							<div class="ad-actions">

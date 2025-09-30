@@ -197,7 +197,7 @@
 					<div class="info-box">
 						<p><strong>Cómo funciona:</strong></p>
 						<ol>
-							<li>Se generará automáticamente una clave pública de encriptación vinculada a tu MetaMask</li>
+							<li>Se generará automáticamente una id de encriptación vinculada a tu MetaMask</li>
 							<li>Los interesados podrán enviarte mensajes cifrados</li>
 							<li>Solo tú podrás descifrar los mensajes firmando con tu MetaMask</li>
 						</ol>

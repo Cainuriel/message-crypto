@@ -114,7 +114,7 @@
 
 		<div class="decryption-panel">
 			<h3>🔐 Descifrar Mensajes con MetaMask</h3>
-			<p>Los mensajes están cifrados con tu clave pública. Usa MetaMask para descifrarlos de forma segura.</p>
+			<p>Los mensajes están cifrados con la id del anuncio que está vinculada a la firma de su cuenta metamask</p>
 
 			<div class="decrypt-actions">
 				<button
@@ -133,7 +133,7 @@
 			<div class="crypto-info">
 				<div class="info-item">
 					<span class="info-icon">🔑</span>
-					<span>Se usará tu clave privada de MetaMask para descifrar</span>
+					<span>Se usará una firma de su metamask para descifrar</span>
 				</div>
 				<div class="info-item">
 					<span class="info-icon">🔒</span>
