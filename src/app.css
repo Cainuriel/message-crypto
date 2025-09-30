@@ -57,10 +57,21 @@ input:focus {
 	margin-bottom: 1rem;
 }
 
+.message {
+	padding: 0.75rem;
+	border-radius: 0.5rem;
+	border: 1px solid;
+	margin-bottom: 1rem;
+}
+
 .error {
 	color: #dc2626;
 	background: #fef2f2;
-	padding: 0.75rem;
-	border-radius: 0.5rem;
-	border: 1px solid #fecaca;
+	border-color: #fecaca;
+}
+
+.success {
+	color: #059669;
+	background: #ecfdf5;
+	border-color: #a7f3d0;
 }

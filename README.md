@@ -1,121 +1,196 @@
-# MessageCrypto - Sistema de Mensajería Cifrada End-to-End
+# MessageCrypto - Sistema de Anuncios Clasificados con Mensajería Cifrada
 
 ## Descripción
 
-MessageCrypto es una aplicación web desarrollada en SvelteKit que implementa un sistema de mensajería cifrada end-to-end entre compradores y vendedores. Los vendedores crean anuncios y solo ellos pueden descifrar los mensajes que reciben de los compradores interesados.
+MessageCrypto es una aplicación web desarrollada en SvelteKit que implementa un sistema de anuncios clasificados con mensajería cifrada end-to-end. Los usuarios pueden crear anuncios y recibir mensajes cifrados que solo ellos pueden descifrar usando MetaMask.
+
+## Características Principales
+
+- **Creación de Anuncios**: Los usuarios pueden crear anuncios con imagen, título, descripción y precio
+- **Mensajería Cifrada**: Sistema de cifrado usando claves derivadas de firmas de MetaMask
+- **Dashboard Completo**: Visualización de anuncios propios y de otros usuarios
+- **Persistencia Local**: Los datos se guardan en localStorage del navegador
+- **Interface Intuitiva**: Diseño responsivo y fácil de usar
 
 ## Arquitectura del Sistema de Cifrado
 
 ### Flujo de Funcionamiento
 
-#### 1. Creación de Anuncio (Vendedor)
+#### 1. Creación de Anuncio
 
-Cuando un vendedor crea un anuncio:
+Cuando un usuario crea un anuncio:
 
-1. **Conexión con MetaMask**: El vendedor conecta su wallet MetaMask
-2. **Generación de Clave Pública**: El sistema solicita a MetaMask una clave pública de cifrado usando `eth_getEncryptionPublicKey`
-3. **Derivación de Clave**: MetaMask deriva una clave pública X25519 desde la clave privada Ethereum del vendedor
-4. **Almacenamiento**: La clave pública se almacena en el anuncio en formato base64 (44 caracteres)
-
-```javascript
-// Ejemplo de clave pública almacenada
-encryptionPublicKey: "cwU4v1WUQlMly3/JH88bnq6OWa3w44vAx2vJgR2nmlU="
-```
-
-#### 2. Envío de Mensaje (Comprador)
-
-Cuando un comprador envía un mensaje:
-
-1. **Sin MetaMask Requerido**: El comprador NO necesita MetaMask para cifrar
-2. **Generación de Claves Efímeras**: Se genera un par de claves temporales X25519 únicas para este mensaje
-3. **Cifrado del Mensaje**: Se usa el algoritmo nacl.box (X25519 + XSalsa20-Poly1305) combinando:
-   - Clave pública del vendedor (del anuncio)
-   - Clave privada efímera (temporal, se descarta después)
-4. **Estructura del Mensaje Cifrado**: Se crea un objeto JSON con:
-   - `version`: Identificador del algoritmo usado
-   - `nonce`: Número único de 24 bytes para este cifrado
-   - `ephemPublicKey`: Clave pública efímera (necesaria para descifrar)
-   - `ciphertext`: Mensaje cifrado
+1. **Conexión con MetaMask**: El usuario debe estar conectado con MetaMask
+2. **Generación de Firma**: Se firma el mensaje `ENCRYPTION_KEY_FOR_ADS_{address}` con MetaMask
+3. **Derivación de Claves**: Se deriva un par de claves (pública/privada) usando ethers.js
+4. **Almacenamiento**: Se guarda la clave pública en el anuncio y la dirección derivada
 
 ```javascript
-// Ejemplo de mensaje cifrado
+// Estructura del anuncio
 {
-  "version": "x25519-xsalsa20-poly1305",
-  "nonce": "9s31N0inufskNteBlwTmxzoJ+NL9T2ZW",
-  "ephemPublicKey": "+UPmrd3v4m+043EKmNwsx23bG6f34ouDCWktGxOol2E=",
-  "ciphertext": "k8XUiqyKeuRwEx+7GyqlRRWLXRncLRavg5Ua"
+  id: "1759259738251",
+  title: "iPhone 15 Pro",
+  description: "Excelente estado",
+  price: "800 EUR",
+  creator: "0x4B13Cde86c836482aa358d5632574Ee388329225",
+  publicKey: "0x0278083660eadcde0e43d2b70788357d9f87a969e1bfae22f0843101cb6e5cfcb9",
+  derivedAddress: "0xf3Bb32c3C53FDC6DaA435EebcA332834f537861E",
+  keyId: "enc_simple_4B13Cde8_1759259738251"
 }
 ```
 
-#### 3. Descifrado de Mensaje (Vendedor)
+#### 2. Envío de Mensaje Cifrado
 
-Cuando el vendedor quiere leer un mensaje:
+Cuando alguien envía un mensaje:
 
-1. **Verificación de Identidad**: El sistema verifica que la cuenta activa en MetaMask coincida con el creador del anuncio
-2. **Solicitud a MetaMask**: Se envía el objeto cifrado completo a MetaMask usando `eth_decrypt`
-3. **Descifrado Interno**: MetaMask usa internamente:
-   - Su clave privada (nunca expuesta)
-   - La clave pública efímera del mensaje
-4. **Resultado**: MetaMask devuelve el mensaje descifrado en texto plano
+1. **Selección del Anuncio**: Se elige el anuncio al que enviar el mensaje
+2. **Cifrado con Clave Pública**: Se usa la clave pública del anuncio para cifrar
+3. **Algoritmo XOR**: Implementación simple pero efectiva usando ethers.js
+4. **Almacenamiento**: El mensaje cifrado se guarda asociado al anuncio
 
-## Algoritmos Criptográficos Utilizados
+```javascript
+// Estructura del mensaje cifrado
+{
+  id: "1759259768427",
+  adId: "1759259738251",
+  sender: "0x...",
+  encryptedData: {
+    version: "ethers-simple-xor",
+    data: "0x75844e36d45c4cd7e6a108eb3a5dfc95c5e2ca1c1a98814315c817756aaf713e05c21e6693064c92a7f0",
+    keyRef: "0x30f73e53"
+  },
+  timestamp: "2025-09-30T19:08:54.151Z"
+}
+```
 
-### Intercambio de Claves
-- **X25519 (Curve25519)**: Para el intercambio seguro de claves
-- **Claves de 32 bytes**: Tamaño estándar para X25519
-- **Derivación desde Ethereum**: Las claves se derivan de las claves privadas de Ethereum
+#### 3. Descifrado de Mensaje
 
-### Cifrado Simétrico
-- **XSalsa20-Poly1305**: Cifrado autenticado de flujo
-- **Nonce de 24 bytes**: Número único para cada mensaje
-- **MAC integrado**: Verificación automática de integridad con Poly1305
+Cuando el creador del anuncio quiere leer los mensajes:
 
-### Seguridad de Claves
-- **Claves Efímeras**: Cada mensaje usa claves temporales únicas
-- **Forward Secrecy**: Comprometer un mensaje no afecta a otros
-- **Claves Privadas Protegidas**: Nunca salen de MetaMask
+1. **Verificación de Identidad**: Se verifica que el usuario conectado es el creador del anuncio
+2. **Regeneración de Firma**: Se firma nuevamente el mismo mensaje con MetaMask
+3. **Derivación de Clave Privada**: Se deriva la misma clave privada usando la firma
+4. **Descifrado XOR**: Se aplica el algoritmo XOR inverso para recuperar el texto original
+5. **Almacenamiento**: El mensaje descifrado se guarda para evitar descifrar múltiples veces
+
+## Tecnologías Utilizadas
+
+### Frontend
+- **SvelteKit**: Framework web moderno para el frontend
+- **ethers.js v6**: Librería para interacción con Ethereum y criptografía
+- **CSS Moderno**: Estilos responsivos sin dependencias externas
+
+### Criptografía
+- **Algoritmo XOR**: Cifrado simétrico simple pero efectivo
+- **Derivación de Claves**: Basada en firmas determinísticas de MetaMask
+- **Keccak256**: Hash criptográfico para derivación de claves
+
+### Almacenamiento
+- **localStorage**: Persistencia local de anuncios y mensajes
+- **Estructura JSON**: Formato estándar para intercambio de datos
+
+## APIs del Servidor
+
+### /api/encryption/generate-key-test
+- **Método**: POST
+- **Función**: Genera par de claves a partir de firma de MetaMask
+- **Input**: address, signature
+- **Output**: publicKey, derivedAddress, keyId
+
+### /api/encryption/encrypt-simple
+- **Método**: POST  
+- **Función**: Cifra un mensaje usando clave pública
+- **Input**: message, recipientPublicKey
+- **Output**: encryptedData con estructura version/data/keyRef
+
+### /api/encryption/decrypt-simple
+- **Método**: POST
+- **Función**: Descifra un mensaje usando clave privada derivada
+- **Input**: encryptedData, address, signature
+- **Output**: message descifrado en texto plano
 
 ## Características de Seguridad
 
 ### Fortalezas del Sistema
 
-1. **Algoritmos de Grado Militar**
-   - X25519 es resistente a ataques de computación cuántica por décadas
-   - XSalsa20-Poly1305 es usado por Signal, WhatsApp y otras aplicaciones de alta seguridad
+1. **Claves Criptográficas Robustas**
+   - Derivación determinística desde firmas de MetaMask
+   - Uso de Keccak256 para hashing criptográfico
+   - Claves de 256 bits para máxima seguridad
 
 2. **Protección de Claves Privadas**
-   - Las claves privadas permanecen siempre en MetaMask
-   - No hay código que acceda directamente a las claves privadas
-   - MetaMask maneja todo el proceso de descifrado internamente
+   - Las claves privadas se derivan pero no se exponen al frontend
+   - MetaMask maneja las firmas de forma segura
+   - Regeneración determinística desde la misma firma
 
-3. **Forward Secrecy Parcial**
-   - Cada mensaje usa claves efímeras únicas
-   - Comprometer la clave de un mensaje no afecta a otros mensajes
+3. **Cifrado por Anuncio**
+   - Cada anuncio tiene su par de claves único
+   - Los mensajes de diferentes anuncios no están relacionados
+   - Aislamiento completo entre conversaciones
 
-4. **Autenticación de Mensajes**
-   - Poly1305 MAC previene la modificación de mensajes
-   - Verificación automática de integridad en cada descifrado
-
-5. **Verificación de Destinatario**
-   - Solo el creador del anuncio puede descifrar los mensajes
+4. **Verificación de Identidad**
+   - Solo el creador del anuncio puede descifrar mensajes
    - Verificación automática de direcciones Ethereum
+   - Protección contra acceso no autorizado
 
-### Comparación con Estándares de la Industria
+5. **Persistencia Segura**
+   - Los mensajes se almacenan cifrados en localStorage
+   - Los mensajes descifrados se marcan para evitar re-descifrado
+   - Datos protegidos incluso con acceso al navegador
 
-| Aspecto | MessageCrypto | Signal/WhatsApp | Estado |
-|---------|---------------|-----------------|--------|
-| Intercambio de claves | X25519 | X25519 | Equivalente |
-| Cifrado | XSalsa20-Poly1305 | ChaCha20-Poly1305 | Muy similar |
-| Forward Secrecy | Parcial | Completo | Mejorable |
-| Protección de claves | Completa | Completa | Equivalente |
-| Metadata Protection | Básica | Avanzada | Mejorable |
+### Limitaciones Conocidas
 
-## Arquitectura Técnica
+1. **Almacenamiento Local**: Los datos se pierden si se limpia el navegador
+2. **Cifrado XOR Simple**: Más simple que algoritmos como AES o ChaCha20
+3. **Sin Forward Secrecy**: Comprometer la clave privada afecta todos los mensajes
+4. **Dependencia de MetaMask**: Requiere MetaMask para crear anuncios y descifrar
 
-### Tecnologías Principales
+## Instalación y Desarrollo
 
-- **Frontend**: SvelteKit con JavaScript
-- **Criptografía**: TweetNaCl (implementación de NaCl en JavaScript)
+### Prerrequisitos
+
+- Node.js 18 o superior
+- npm o yarn
+- MetaMask instalado en el navegador
+- Navegador moderno con soporte para WebCrypto
+
+### Instalación
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/tu-usuario/message-crypto.git
+cd message-crypto
+
+# Instalar dependencias
+npm install
+
+# Ejecutar en modo desarrollo
+npm run dev
+
+# Construir para producción
+npm run build
+```
+
+### Estructura del Proyecto
+
+```
+src/
+├── lib/
+│   └── stores/
+│       ├── auth.js          # Manejo de autenticación con MetaMask
+│       └── ads.js           # Store de anuncios y mensajes
+├── routes/
+│   ├── +layout.svelte       # Layout principal
+│   ├── +page.svelte         # Página de login
+│   ├── dashboard/
+│   │   ├── +page.svelte     # Dashboard principal
+│   │   ├── create/          # Crear anuncio
+│   │   ├── ads/[adId]/      # Enviar mensaje
+│   │   └── messages/[adId]/ # Ver mensajes
+│   ├── api/encryption/      # APIs de cifrado
+│   └── test/                # Página de pruebas
+└── app.css                  # Estilos globales
+```
 - **Wallet Integration**: MetaMask con window.ethereum API
 - **Algoritmos**: X25519, XSalsa20, Poly1305
 - **Formato**: Base64 para codificación de datos binarios
@@ -171,60 +246,108 @@ npm run dev
 
 ### Uso del Sistema
 
-1. **Conectar MetaMask**: Conecta tu wallet en la aplicación
-2. **Crear Anuncio**: Como vendedor, crea un anuncio que generará tu clave pública de cifrado
-3. **Enviar Mensaje**: Como comprador, envía mensajes cifrados a los vendedores
-4. **Leer Mensajes**: Como vendedor, descifra los mensajes recibidos usando MetaMask
+#### Para Crear un Anuncio:
+1. Conectar MetaMask en la página principal
+2. Ir a "Crear Anuncio" en el dashboard
+3. Completar título, descripción, precio e imagen
+4. El sistema genera automáticamente las claves de cifrado
+5. El anuncio queda publicado y visible para otros usuarios
 
-## Consideraciones para Producción
+#### Para Enviar un Mensaje:
+1. Navegar al dashboard y ver anuncios de otros usuarios
+2. Hacer clic en "Enviar Mensaje Cifrado" en cualquier anuncio
+3. Escribir el mensaje (se cifra automáticamente)
+4. El mensaje se envía cifrado al creador del anuncio
 
-### Mejoras Recomendadas
+#### Para Leer Mensajes Recibidos:
+1. En el dashboard, ver tus anuncios con contador de mensajes
+2. Hacer clic en "Ver Mensajes" de cualquier anuncio tuyo
+3. Hacer clic en "Descifrar con MetaMask" para cada mensaje
+4. MetaMask solicitará una firma para descifrar
+5. El mensaje se muestra en texto plano
 
-1. **Protección de Metadatos**
-   - Cifrar información del remitente y timestamps
-   - Implementar padding para ocultar longitudes de mensajes
+## Despliegue en Producción
 
-2. **Rotación de Claves**
-   - Sistema automático de renovación de claves de cifrado
-   - Mantener historial para descifrar mensajes antiguos
+### Configuración para Netlify
 
-3. **Forward Secrecy Completo**
-   - Implementar Double Ratchet algorithm
-   - Renovación automática de claves por sesión
+La aplicación requiere modificaciones para funcionar en Netlify debido a las APIs del servidor:
 
-4. **Anti-Replay Protection**
-   - Prevenir mensajes duplicados
-   - Implementar timestamps criptográficos
+#### Opción 1: Usar Netlify Functions
+```bash
+# Crear directorio para funciones
+mkdir netlify/functions
 
-5. **Rate Limiting Criptográfico**
-   - Proof of Work para prevenir spam
-   - Throttling basado en identidad criptográfica
+# Mover lógica de APIs a funciones serverless
+```
 
-### Auditoría de Seguridad
+#### Opción 2: Usar Vercel (Recomendado)
+Vercel soporta SvelteKit APIs nativamente:
+```bash
+npm install -g vercel
+vercel
+```
 
-Para uso en producción se recomienda:
+#### Opción 3: Adapter Netlify
+```bash
+npm install @sveltejs/adapter-netlify
+```
 
-1. **Auditoría Profesional**: Contratación de firma especializada en criptografía
-2. **Penetration Testing**: Pruebas de intrusión específicas para sistemas criptográficos
-3. **Code Review**: Revisión exhaustiva por expertos en seguridad
-4. **Compliance**: Verificación de cumplimiento con estándares como OWASP
+## Casos de Uso
+
+### Marketplace Descentralizado
+- Vendedores publican productos con mensajería privada
+- Compradores contactan sin revelar información personal
+- Comunicación cifrada para negociaciones
+
+### Servicios Profesionales
+- Freelancers ofrecen servicios
+- Clientes envían briefings confidenciales
+- Protección de propiedad intelectual
+
+### Intercambio P2P
+- Trading de criptomonedas o NFTs
+- Comunicación segura para acordar términos
+- Protección contra intercepción de información
 
 ## Limitaciones Actuales
 
-1. **Dependencia de MetaMask**: Requiere que los usuarios tengan MetaMask instalado
-2. **Metadatos Expuestos**: Información del remitente y timestamps son visibles
-3. **Sin Rotación de Claves**: Las claves de cifrado no se renuevan automáticamente
-4. **Almacenamiento Local**: Los datos se almacenan en localStorage (no persistente)
+1. **Dependencia de MetaMask**: Requiere MetaMask para crear anuncios y descifrar
+2. **Almacenamiento Local**: Los datos se almacenan en localStorage del navegador
+3. **Sin Forward Secrecy**: Comprometer la clave afecta todos los mensajes
+4. **Cifrado XOR Simple**: Más básico que algoritmos como AES o ChaCha20
 5. **Sin Backup de Claves**: No hay sistema de recuperación de claves
+
+## Mejoras Futuras
+
+### Seguridad
+- [ ] Implementar Perfect Forward Secrecy
+- [ ] Migrar a algoritmos más robustos (AES-GCM, ChaCha20)
+- [ ] Sistema de rotación de claves
+- [ ] Auditoría de seguridad profesional
+
+### Funcionalidades
+- [ ] Base de datos real para persistencia
+- [ ] Notificaciones push cifradas
+- [ ] Sistema de búsqueda y filtros
+- [ ] Soporte para archivos adjuntos
+- [ ] Múltiples wallets (WalletConnect, etc.)
+
+## Contribuir
+
+1. Fork el repositorio
+2. Crear una rama (`git checkout -b feature/NuevaCaracteristica`)
+3. Commit los cambios (`git commit -m 'Agregar nueva característica'`)
+4. Push a la rama (`git push origin feature/NuevaCaracteristica`)
+5. Abrir un Pull Request
 
 ## Licencia
 
-Sin licencia
+Licencia MIT - ver [LICENSE](LICENSE) para detalles.
 
 ## Autor
 
-Fernando López
+Fernando López - cainuriel@gmail.com
 
-## Contacto
- 
- cainuriel@gmail.com
+---
+
+**Nota**: Este proyecto es educativo. Para producción se recomienda auditoría de seguridad profesional.

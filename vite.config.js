@@ -7,14 +7,7 @@ export default defineConfig({
 		global: 'globalThis',
 	},
 	optimizeDeps: {
-		include: ['@metamask/detect-provider', '@metamask/eth-sig-util', 'buffer', 'crypto-browserify']
-	},
-	resolve: {
-		alias: {
-			buffer: 'buffer',
-			crypto: 'crypto-browserify',
-			stream: 'stream-browserify',
-		}
+		include: ['@metamask/detect-provider', 'tweetnacl', 'tweetnacl-util']
 	},
 	ssr: {
 		noExternal: []

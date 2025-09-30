@@ -48,21 +48,71 @@
 		}
 	}
 
-	async function testMetaMask() {
-		console.log('Probando detección de MetaMask...');
-		console.log('window.ethereum:', !!window.ethereum);
+	async function refreshMetaMaskConnection() {
+		console.log('Forzando reconexión con MetaMask...');
+		
+		if (!window.ethereum) {
+			error = 'MetaMask no está instalada. Por favor instálala para continuar.';
+			return;
+		}
 
+		try {
+			// Limpiar error anterior
+			error = '';
+			
+			// Forzar reconexión solicitando cuentas
+			const accounts = await window.ethereum.request({ 
+				method: 'eth_requestAccounts' 
+			});
+			
+			console.log('Cuentas obtenidas tras reconexión:', accounts);
+
+			if (accounts.length > 0) {
+				const newAddress = accounts[0];
+				console.log('Nueva dirección activa:', newAddress);
+				
+				// Actualizar la dirección en el input
+				publicAddress = newAddress;
+				
+				// Mostrar mensaje de éxito temporal
+				const tempMessage = error;
+				error = `Dirección actualizada: ${newAddress.slice(0, 6)}...${newAddress.slice(-4)}`;
+				
+				// Limpiar mensaje después de 3 segundos
+				setTimeout(() => {
+					if (error.includes('Dirección actualizada')) {
+						error = '';
+					}
+				}, 3000);
+				
+			} else {
+				error = 'No se encontraron cuentas en MetaMask';
+			}
+		} catch (err) {
+			console.error('Error reconectando con MetaMask:', err);
+			if (err.code === 4001) {
+				error = 'Conexión rechazada por el usuario';
+			} else {
+				error = 'Error conectando con MetaMask: ' + err.message;
+			}
+		}
+	}
+
+	async function detectInitialMetaMask() {
+		console.log('Detectando MetaMask inicial...');
+		
 		if (window.ethereum) {
 			try {
+				// Solo obtener cuentas ya conectadas (sin forzar popup)
 				const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-				console.log('Cuentas disponibles:', accounts);
+				console.log('Cuentas ya conectadas:', accounts);
 
 				if (accounts.length > 0) {
 					console.log('Cuenta activa detectada:', accounts[0]);
 					publicAddress = accounts[0];
 				}
 			} catch (err) {
-				console.error('Error obteniendo cuentas:', err);
+				console.error('Error obteniendo cuentas iniciales:', err);
 			}
 		}
 	}
@@ -73,7 +123,7 @@
 				error = 'MetaMask no está instalada. Por favor instálala para continuar.';
 			} else {
 				console.log('MetaMask detectada');
-				testMetaMask();
+				detectInitialMetaMask();
 			}
 		}
 	});
@@ -101,7 +151,9 @@
 			</div>
 
 			{#if error}
-				<div class="error">{error}</div>
+				<div class="message {error.includes('actualizada') ? 'success' : 'error'}">
+					{error}
+				</div>
 			{/if}
 
 			<button type="submit" disabled={loading || !publicAddress.trim()}>
@@ -110,8 +162,8 @@
 		</form>
 
 		<div class="debug-section">
-			<button type="button" on:click={testMetaMask} class="debug-btn">
-			 Si cambia de dirección clique aquí 
+			<button type="button" on:click={refreshMetaMaskConnection} class="debug-btn">
+				Actualizar dirección de MetaMask
 			</button>
 		</div>
 

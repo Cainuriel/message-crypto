@@ -27,20 +27,29 @@ export {};
 
 declare module "$app/types" {
 	export interface AppTypes {
-		RouteId(): "/" | "/dashboard" | "/dashboard/ads" | "/dashboard/create" | "/dashboard/messages" | "/dashboard/messages/[adId]" | "/test";
+		RouteId(): "/" | "/api" | "/api/encryption" | "/api/encryption/decrypt-simple" | "/api/encryption/encrypt-simple" | "/api/encryption/generate-key-test" | "/api/public-key" | "/api/test" | "/dashboard" | "/dashboard/ads" | "/dashboard/ads/[adId]" | "/dashboard/create" | "/dashboard/messages" | "/dashboard/messages/[adId]" | "/test";
 		RouteParams(): {
+			"/dashboard/ads/[adId]": { adId: string };
 			"/dashboard/messages/[adId]": { adId: string }
 		};
 		LayoutParams(): {
 			"/": { adId?: string };
+			"/api": Record<string, never>;
+			"/api/encryption": Record<string, never>;
+			"/api/encryption/decrypt-simple": Record<string, never>;
+			"/api/encryption/encrypt-simple": Record<string, never>;
+			"/api/encryption/generate-key-test": Record<string, never>;
+			"/api/public-key": Record<string, never>;
+			"/api/test": Record<string, never>;
 			"/dashboard": { adId?: string };
-			"/dashboard/ads": Record<string, never>;
+			"/dashboard/ads": { adId?: string };
+			"/dashboard/ads/[adId]": { adId: string };
 			"/dashboard/create": Record<string, never>;
 			"/dashboard/messages": { adId?: string };
 			"/dashboard/messages/[adId]": { adId: string };
 			"/test": Record<string, never>
 		};
-		Pathname(): "/" | "/dashboard" | "/dashboard/" | "/dashboard/ads" | "/dashboard/ads/" | "/dashboard/create" | "/dashboard/create/" | "/dashboard/messages" | "/dashboard/messages/" | `/dashboard/messages/${string}` & {} | `/dashboard/messages/${string}/` & {} | "/test" | "/test/";
+		Pathname(): "/" | "/api" | "/api/" | "/api/encryption" | "/api/encryption/" | "/api/encryption/decrypt-simple" | "/api/encryption/decrypt-simple/" | "/api/encryption/encrypt-simple" | "/api/encryption/encrypt-simple/" | "/api/encryption/generate-key-test" | "/api/encryption/generate-key-test/" | "/api/public-key" | "/api/public-key/" | "/api/test" | "/api/test/" | "/dashboard" | "/dashboard/" | "/dashboard/ads" | "/dashboard/ads/" | `/dashboard/ads/${string}` & {} | `/dashboard/ads/${string}/` & {} | "/dashboard/create" | "/dashboard/create/" | "/dashboard/messages" | "/dashboard/messages/" | `/dashboard/messages/${string}` & {} | `/dashboard/messages/${string}/` & {} | "/test" | "/test/";
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
 		Asset(): string & {};
 	}

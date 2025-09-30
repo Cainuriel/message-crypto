@@ -43,11 +43,11 @@
 			for (const message of messages) {
 				try {
 					console.log(`Descifrando mensaje ${message.id}...`);
-					const result = await decryptMessage(message.id, adId, $signer);
+					const result = await decryptMessage(message.id, $userAddress, $signer);
 
 					if (result.success) {
 						newDecryptedMessages[message.id] = {
-							text: result.decryptedText,
+							text: result.decryptedMessage,
 							success: true
 						};
 					} else {
