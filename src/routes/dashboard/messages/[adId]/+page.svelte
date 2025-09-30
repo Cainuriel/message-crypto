@@ -15,12 +15,12 @@
 
 		currentAd = $ads.find(ad => ad.id === adId);
 		if (!currentAd) {
-			goto('/dashboard/ads');
+			goto('/dashboard');
 			return;
 		}
 
 		if (currentAd.creator !== $userAddress) {
-			goto('/dashboard/ads');
+			goto('/dashboard');
 			return;
 		}
 
@@ -74,7 +74,7 @@
 	}
 
 	function goBack() {
-		goto('/dashboard/ads');
+		goto('/dashboard');
 	}
 
 	function formatDate(dateString) {

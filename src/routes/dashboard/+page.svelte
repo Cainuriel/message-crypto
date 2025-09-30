@@ -1,6 +1,6 @@
 <script>
 	import { isConnected, userAddress, disconnect } from '$lib/stores/auth.js';
-	import { ads, getAds } from '$lib/stores/ads.js';
+	import { ads, getAds, clearAllData } from '$lib/stores/ads.js';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
@@ -30,6 +30,13 @@
 	function handleDisconnect() {
 		disconnect();
 		goto('/');
+	}
+
+	function handleClearData() {
+		if (confirm('¿Estás seguro de que quieres borrar todos los datos? Esta acción no se puede deshacer.')) {
+			clearAllData();
+			alert('Todos los datos han sido eliminados.');
+		}
 	}
 
 	function formatDate(isoString) {
@@ -67,6 +74,9 @@
 			<div class="header-actions">
 				<button class="btn-primary" on:click={goToCreate}>
 					+ Crear Anuncio
+				</button>
+				<button class="btn-danger" on:click={handleClearData}>
+					🗑️ Limpiar Datos
 				</button>
 				<button class="btn-secondary" on:click={handleDisconnect}>
 					Desconectar
@@ -382,6 +392,21 @@
 
 	.btn-secondary:hover {
 		background: #4b5563;
+	}
+
+	.btn-danger {
+		background: #dc2626;
+		color: white;
+		border: none;
+		padding: 0.75rem 1.5rem;
+		border-radius: 0.5rem;
+		cursor: pointer;
+		font-size: 1rem;
+		transition: background-color 0.2s;
+	}
+
+	.btn-danger:hover {
+		background: #b91c1c;
 	}
 
 	.btn-messages {
